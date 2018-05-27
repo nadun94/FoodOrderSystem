@@ -7,6 +7,9 @@ import { Container, Row, Col } from 'reactstrap';
 import '../../assets/css/foodStyle.css'
 import { Table } from 'reactstrap';
 import UniqeIdMixin from 'unique-id-mixin';
+import MdClear from 'react-icons/lib/md/clear';
+import { task } from 'react-task';
+
 export default class FoodList extends Component {
 
 
@@ -15,22 +18,19 @@ export default class FoodList extends Component {
         this.state = {
             foodArray: [],
             qty: [],
-            cart: [{
-                'foodName': '',
-                'price': '',
-                'qty': '',
-                'subTotal': '',
-
-            }],
-
+            cart: [],
+            fullCart: [],
+            i: 0,
+            totalPrice: 0,
         }
-
         this.generateFoodList = this.generateFoodList.bind(this);
         this.addToCart = this.addToCart.bind(this);
-        this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
-
-
+        this.removeFromCart = this.removeFromCart.bind(this);
+        this.calcTotal = this.calcTotal.bind(this);
+        this.calcTotalAferDel = this.calcTotalAferDel.bind(this);
+        this.geneateFoodListTable = this.geneateFoodListTable.bind(this);
+        
     }
 
     componentDidMount() {
@@ -42,36 +42,69 @@ export default class FoodList extends Component {
             })
 
     }
-    handleChange({ target }) {
-        this.setState({
-            [target.name]: target.value
-        });
+
+    componentWillMount(){
+        this.generateFoodList()
     }
     handleClick(index, event) {
-        var qty = this.state.qty.slice(); // Make a copy of the emails first.
-        qty[index] = event.target.value; // Update it with the modified email.
-        this.setState({qty: qty}); // Update the state.
+        var qty = this.state.qty.slice();
+        qty[index] = event.target.value;
+        this.setState({ qty: qty });
     }
-    yourFoodList() {
-
+    async removeFromCart(a) {
+        var ind = this.state.fullCart.indexOf(a);
+        this.state.fullCart.splice(ind, 1);
+        await this.calcTotalAferDel()
 
     }
-    addToCart(item) {
-        alert(this.state.qty[item.id - 1])
-        // this.setState({
-        //         cart:{...this.state.cart,'foodName':item.foodName,'price':item.price,'qty':this.state.qty[item.id],'subTotal':5}
-        // }) 
-        console.log(this.state.cart)
-        // alert(this.sate.cart)
+    async calcTotalAferDel() {
+        var temp = 0;
+       this.state.fullCart.map( (item)=>{
+        temp += item.subTotal
+       }
+   
+       )
+           
+        
+       await this.setState({totalPrice:temp});
+       this.generateFoodList()
     }
+    calcTotal(j) {
+        const { totalPrice } = this.state;
+        var tt = this.state.fullCart[j - 1].subTotal + this.state.totalPrice;
+        this.setState({ totalPrice: tt })
+    }
+    async addToCart(item) {
+        var j = ++this.state.i;
+        var tempQty = this.state.qty[item.id - 1]
+        await this.setState({ cart: { index: j, foodName: item.foodName, price: item.price, qty: tempQty, subTotal: (tempQty * item.price) } })
 
+        await this.state.fullCart.push(this.state.cart)
+        this.calcTotalAferDel();
+    }
+geneateFoodListTable(){
+    {
+            return(
+                this.state.fullCart.map(item =>
+                    <tr>
+                        <th scope="row">{item.index}</th>
+                        <td>{item.foodName}</td>
+                        <td>{item.price}</td>
+                        <td>{item.qty}</td>
+                        <td>{item.subTotal}</td>
+                        <td><span id="remove"><MdClear size={24} color="red" onClick={this.removeFromCart.bind(item)} /></span></td>
+        
+                    </tr>
+                )
+            )
+    }
+}
 
     generateFoodList() {
-var x;
         return (
             <ul className="mainGrid">
                 {
-                    this.state.foodArray.map(foodItem =>
+                    this.state.foodArray.map((foodItem) =>
                         <li key={foodItem.id} className="food-list-cards">
                             <div className="food-item">
 
@@ -85,7 +118,7 @@ var x;
                                             <CardSubtitle><h4>Rs {foodItem.price}</h4></CardSubtitle>
                                             <Input type="number" id={foodItem.id} placeholder="Enter quantity"
                                                 name='qty'
-                                                onChange={this.handleClick.bind(this, (foodItem.id-1))}
+                                                onChange={this.handleClick.bind(this, (foodItem.id - 1))}
                                             />
                                         </div>
                                         <div className="space-for">
@@ -125,27 +158,13 @@ var x;
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td>Larry</td>
-                                        <td>the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
+                                    {
+                                      this.geneateFoodListTable()
+                                    }
+
                                 </tbody>
                             </Table>
-
+                            <h4> Total Price: {this.state.totalPrice}</h4>
                         </CardBody>
                     </Card>
 
