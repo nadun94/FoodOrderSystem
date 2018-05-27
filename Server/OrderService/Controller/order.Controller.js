@@ -1,11 +1,12 @@
 var mongoose = require('../models/SchemaMapper');
 
 var orderModel = mongoose.model('Orders');
+var foodModel = mongoose.model('Food');
 
 var OrderControllerMain = function(){
 
-    //insertion
-  this.insert = (data)=>{
+    //insert order
+  this.insertOrder = (data)=>{
         return new Promise((resolve,reject)=>{
                 var fdOdr= new orderModel({
                     list:data.list,
@@ -27,6 +28,25 @@ var OrderControllerMain = function(){
     })
 }
 
+//insert foods
+this.insertFood = (data)=>{
+    return new Promise((resolve,reject)=>{
+            var food= new foodModel({
+               id:data.id,
+               foodName:data.foodName,
+               price:data.price,
+            })
+
+            food.save().then(
+                ()=>{
+                    resolve({status:200,message:"New Food items is added."})
+                }).catch(()=>{
+                    reject({status:500,message:"Error inserting data"})
+                })
+    
+})
+}
+
 // this.update = (id)=>{
 //     return new Promise((resolve,reject)=>{
 //         orderModel.update({_id:id},data).then(()=>{
@@ -39,14 +59,11 @@ var OrderControllerMain = function(){
 //     })
 // }
 
-// this.searchAll = (id,data)=>{
-//     return new Promise((resolve,reject)=>{
-//             orderModel.find().populate('User').exec()
-//             .then(()=>{
-//                 resolve({status:200,message:"All records"})
-//             }).catch(reject({status:500,message:"Error finding all records"}))
-//     })
-// }
+this.searchAllFoods = ()=>{
+    
+       return (foodModel.find().sort({ createdAt: -1 }));
+         
+}
 
 // this.search= (id)=>{
 //     return new Promise((resolve,reject)=>{

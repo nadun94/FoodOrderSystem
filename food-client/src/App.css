@@ -1,28 +1,58 @@
-.App {
-  text-align: center;
+.App1 {
+  text-align: right;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
+.App1-logo {
+  animation: App-logo-spin infinite 5s;
   height: 80px;
+  align-items: center;  
+  margin-left: 100px;
 }
 
-.App-header {
+.App1-header {
   background-color: #222;
-  height: 150px;
+  height: 120px;
   padding: 20px;
+  display: inline-flex;
+  flex-flow: row;
+  flex-grow: inherit;
   color: white;
+  width: 100%;
 }
 
-.App-title {
-  font-size: 1.5em;
+.App1-title {
+  font-size: 2.5em;
+  float: left;
+  margin-left: 380px;
+  font-family: cursive; 
 }
 
-.App-intro {
-  font-size: large;
+.App1-intro {
+  font-size: 2.5em;
+  float: center;
+  text-align: center;
+  align-content: center;
+  padding: 30px;
+  margin: 10px;
+  font-weight: 400px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif
+
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from { transform: scale(1, 1.9); }
+  to { transform: scale(1, 1.6); }
+}
+
+#gocen{
+  display: inline;
+  align-content: center;
+
+}
+.logout{
+  float: right;
+  margin-left: 320px;
+}
+.logout:hover{
+  color: crimson;
 }

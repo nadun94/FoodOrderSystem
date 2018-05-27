@@ -6,7 +6,7 @@ const  app = express();
 // app.use(BodyParser.urlencoded({extended:false}));
 app.use(BodyParser.json());
 
-require('./Server/Controller/order.Router')(app);
+require('./Server/OrderService/Controller/order.Router')(app);
    
 
 app.listen(config.PORT,(err)=>{

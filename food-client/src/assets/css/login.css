@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css?family=Pacifico');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+.loginbody {
+
+  padding-bottom: 40px;
+  background-color: #eee;
+  display: grid;
+  grid-template-rows: 25% auto 25%;
+
+}
+#logingTxt{
+  margin: 20px;
+}
+#logingButton{
+  margin-top: 30px;
+  margin-left: 100px;
+}
+.fullscreen_bg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-size: cover;
+  background-position: 50% 50%;
+  background-image: url('http://cleancanvas.herokuapp.com/img/backgrounds/color-splash.jpg');
+  background-repeat:repeat;
+}
+.form-signin {
+  max-width: 500px;
+  padding: 25px;
+  margin: 0 auto;
+    margin-top:0px;
+    align-content: center;
+}
+.form-signin .form-signin-heading, .form-signin {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+.form-signin .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+
+.form-signin-heading {
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 2px 2px rgba(0,0,0,0.5);
+}
+div.rowlg {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  padding: 0px;
+  margin: auto;
+
+  width:390px;
+  height: 400px;
+  margin-top: 50px;
+  
+    }
+    .topic{
+      margin-inline-start: 100px;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-weight: 200;
+      position: relative;
+      padding: 10px;
+      float: center;
+      font-size: 3em;
+      
+    }
+    .forgot{
+      display: inline;
+    }
+    .register{
+      
+      display: inline;
+    }
+    .forgot:hover{
+
+      -moz-font-feature-settings: "swsh";
+      -webkit-animation: 50ms;
+      color:slategrey;
+    }
+   
+    .register:hover{
+
+      -moz-font-feature-settings: "swsh";
+      -webkit-animation: 28ms;
+      color:slategrey;
+    }
+    .divider {
+      display: inline;
+
+ border-left: 2px solid slategray;
+ 
+    margin: 20px;
+    }
+.signin{
+  text-align: center;
+}
+#gocenter{
+
+  margin: 40px;
+}
