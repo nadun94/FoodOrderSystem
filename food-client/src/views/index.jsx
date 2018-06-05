@@ -24,7 +24,7 @@ export default class Home extends Component {
         
                 
                 <p className="App1-intro">
-                    Add Your Food List 😊
+                    Order Your Food List Now 😊
    </p>
 <FoodList />
 

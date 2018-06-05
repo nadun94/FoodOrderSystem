@@ -1,7 +1,7 @@
 module.exports = (app)=>{
     var foodOrderController = require('./order.Controller')
 
-    app.route('/add-order')
+    app.route('/add-order-by-phone')
     .post((req,res)=>{
         console.log(req.body)
         foodOrderController.insertOrder(req.body) 
