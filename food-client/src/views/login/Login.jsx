@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import {FormGroup, FormControl,Button,ControlLabel} from 'react-bootstrap';
 import '../../assets/css/login.css';
+import axios from 'axios'
 export default class Login extends Component {
 
     constructor (props){
@@ -10,8 +11,22 @@ export default class Login extends Component {
             username:'',
             password:'',
         }
+        this.loginFunc = this.loginFunc.bind(this)
     }
 
+    loginFunc(){
+      var self = this;
+
+      axios.post('/login',{
+        username:this.state.username,
+        pass:this.state.password
+      })
+      .then((res)=>{
+        sessionStorage.setItem("token",res.data.token)
+        sessionStorage.setItem("username",this.state.username)
+        window.location.reload();
+      })
+    }
     handleChange = event => {
         this.setState({
           [event.target.id]: event.target.value
@@ -59,7 +74,7 @@ export default class Login extends Component {
    <div id="logingButton">
    <FormGroup>
    {/* <Button bsStyle="warning" bsSize="large" block onClick={this.processLog}> */}
-   <Button bsStyle="primary"  bsSize="large" >Login</Button>
+   <Button bsStyle="primary"  bsSize="large" onClick={this.loginFunc} >Login</Button>
  
 </FormGroup> 
 </div>

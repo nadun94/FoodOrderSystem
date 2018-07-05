@@ -13,7 +13,7 @@ import {
 import registerServiceWorker from './registerServiceWorker';
 const hist = createBrowserHistory();
         function front_auth_display() {
-    if (1 == 1) {
+    if (!sessionStorage.getItem("token")!=null) {
       return (
 
         <switch>

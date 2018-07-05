@@ -11,9 +11,13 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
+    "jwt-simple": "^0.5.1",
     "mongodb": "^3.1.0-beta4",
     "mongoose": "^5.1.1",
     "nodemon": "^1.17.4",
     "twilio": "^3.17.1"
+  },
+  "devDependencies": {
+    "webpack": "^4.11.0"
   }
 }

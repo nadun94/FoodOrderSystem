@@ -44,6 +44,9 @@ const OrderSchema = new schema({
         ,
         CardHolderName: {
             type: String
+        },
+        CardHolderEmail:{
+            type:String
         }
 
     },
@@ -67,11 +70,6 @@ const OrderSchema = new schema({
 mongoose.model('Food', FoodSchema)
 mongoose.model('Orders', OrderSchema)
 
-mongoose.connect('mongodb://localhost:27017/Food_order_db', (err) => {
-    if (err) {
-        console.log('Error connecting to mongodb')
-    }
-    console.log('Database connection successfull')
-})
+
 
 module.exports = mongoose;

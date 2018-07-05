@@ -1,6 +1,7 @@
 module.exports = (app)=>{
     var foodOrderController = require('./order.Controller')
 
+    // save food order list, bill and payment information (purchased using Dialog mobile)
     app.route('/add-order-by-phone')
     .post((req,res)=>{
         console.log(req.body)
@@ -15,6 +16,8 @@ module.exports = (app)=>{
         })
         } )
 
+
+        // route for adding foods to the database. user interface is not created for this part
         app.route('/add-food')
         .post((req,res)=>{
             console.log(req.body)
@@ -29,7 +32,8 @@ module.exports = (app)=>{
             })
             } )
 
-        app.route('/hi')
+            //Get all foods from the database. (This is called each time when home page is loaded in the client)
+        app.route('/get-all-foods')
         .get((req,res)=>{
             foodOrderController.searchAllFoods() 
             .then((data)=>{

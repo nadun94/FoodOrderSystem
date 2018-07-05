@@ -23,10 +23,16 @@ export default class FoodList extends Component {
             i: 0,
             totalPrice: 0,
             showphone: false,
+            showCreditCard: false,
             pin: null,
             phone: null,
             originalPin: null,
-            list_to_send_db:[],
+            list_to_send_db: [],
+            credit_card_number: null,
+            cvc: null,
+            card_holder_name: '',
+            card_holder_email: '',
+            replyFromSampathBank:null,
         }
         this.generateFoodList = this.generateFoodList.bind(this);
         this.addToCart = this.addToCart.bind(this);
@@ -40,7 +46,8 @@ export default class FoodList extends Component {
         this.hidePhone = this.hidePhone.bind(this);
         this.PurchaseByPhone = this.PurchaseByPhone.bind(this);
         this.getPin = this.getPin.bind(this);
-        
+
+
 
 
 
@@ -48,18 +55,22 @@ export default class FoodList extends Component {
     }
 
     componentDidMount() {
-
-        fetch('/hi')
+        // Load all the foods once the home page is loaded
+        fetch('/get-all-foods')
             .then(res => res.json())
             .then(data => {
                 this.setState({ foodArray: data["data"] })
+            })
+            .catch((err) => {
+                console.log(err)
             })
 
     }
     //send phone number to get pin
     getPin() {
         alert(this.state.phone)
-        if (this.state.phone !=null) {
+        console.log(this.state.phone)
+        if (this.state.phone != null) {
             var self = this;
             axios.post('/get-pin', {
                 phone: this.state.phone,
@@ -67,7 +78,7 @@ export default class FoodList extends Component {
                 .then(function (res) {
                     console.log(res.data);
                     //   sessionStorage.setItem('loging_status',res.data.loging_status)
-                    this.setState({ originalPin: res.data.oriPin })
+                    self.setState({ originalPin: res.data.OriPin })
                     alert('success')
 
                 }).catch(function (error) {
@@ -78,28 +89,29 @@ export default class FoodList extends Component {
 
     }
     //pay by phone
-  async  PurchaseByPhone() {
-      await this.state.fullCart.map((item) => {
-        this.state.list_to_send_db.push({"foodName":item.foodName,"qty":item.qty,"subTotal":item.subTotal})
-      })
+    async  PurchaseByPhone() {
+        await this.state.fullCart.map((item) => {
+            this.state.list_to_send_db.push({ "foodName": item.foodName, "qty": item.qty, "subTotal": item.subTotal })
+        })
 
-      
+
         if (this.state.pin == this.state.originalPin) {
             if (this.state.totalPrice != null) {
                 var self = this;
                 axios.post('/add-order-by-phone', {
-                    list:this.state.list_to_send_db,
+                    list: this.state.list_to_send_db,
                     totalPrice: this.state.totalPrice,
-                    payment_method:"pay_by_phone",
-                    pay_by_phone:{
-                        phone:this.state.phone,
-                        pin:this.state.pin
+                    payment_method: "pay_by_phone",
+                    pay_by_phone: {
+                        phone: this.state.phone,
+                        pin: this.state.pin
                     }
-                 
+
                 })
                     .then(function (res) {
                         console.log(res.data);
                         //   sessionStorage.setItem('loging_status',res.data.loging_status)
+                        alert("Thank you for the purchase. We will get back to you.")
 
                     }).catch(function (error) {
                         console.log(error);
@@ -108,10 +120,50 @@ export default class FoodList extends Component {
             }
         }
         else {
-            alert('Your pin is incorrect. Try again.')
+            alert('Your pin is incorrect. Try again.'+ this.state.originalPin+ '  and  ' + this.state.pin)
         }
 
     }
+    //pay by credit card
+    async  PurchaseByCreditCard() {
+        await this.state.fullCart.map((item) => {
+            this.state.list_to_send_db.push({ "foodName": item.foodName, "qty": item.qty, "subTotal": item.subTotal })
+        })
+
+            if (this.state.totalPrice != null) {
+                var self = this;
+                axios.post('http://localhost:4000/add-order-by-credit-card', {
+                   
+                        Card_number : this.state.credit_card_number,
+                        cvc: this.state.cvc,
+                        card_hoder_name: this.state.card_holder_name,
+                        amount: this.state.totalPrice
+                })
+                    .then(function (res) {
+                        console.log(res.data);
+                        this.setState({replyFromSampathBank:res.data.reply})
+                        //   sessionStorage.setItem('loging_status',res.data.loging_status)
+                        alert("Thank you for the purchase. We will get back to you.")
+
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+
+            }
+      
+
+    }
+
+    // list: this.state.list_to_send_db,
+    // totalPrice: this.state.totalPrice,
+    // payment_method: "pay_by_credit_card",
+    // credit_card: {
+    //     Card_number : this.state.credit_card_number,
+    //     cvc: this.state.cvc,
+    //     card_hoder_name: this.state.card_holder_name,
+    //     amount: this.state.totalPrice
+    // }
+
     showPhone() {
         const { showphone } = this.state;
         this.setState({ showphone: true })
@@ -128,9 +180,19 @@ export default class FoodList extends Component {
         qty[index] = event.target.value;
         this.setState({ qty: qty });
     }
-    handleChangetxt(event){
-        this.setState({value: event.target.value});
+    handleChangetxt(event) {
+        this.setState({ phone: event.target.value });
+
     }
+    handleChangetxt_pin(event) {
+        this.setState({ pin: event.target.value });
+
+    }
+    handleChangetxt_credit(event) {
+        this.setState({ value: event.target.value });
+
+    }
+    
     async removeFromCart(a) {
         var ind = this.state.fullCart.indexOf(a);
         this.state.fullCart.splice(ind, 1);
@@ -141,7 +203,7 @@ export default class FoodList extends Component {
         var temp = 0;
         this.state.fullCart.map((item) => {
             temp += item.subTotal
-            
+
         }
 
         )
@@ -163,6 +225,7 @@ export default class FoodList extends Component {
         await this.state.fullCart.push(this.state.cart)
         this.calcTotalAferDel();
     }
+    //Displays and able to customize the food order list
     geneateFoodListTable() {
         {
             return (
@@ -181,6 +244,7 @@ export default class FoodList extends Component {
         }
     }
 
+    //Displays the food list from the databse and provide buttons to add qty and add food to the food order list
     generateFoodList() {
         return (
             <ul className="mainGrid">
@@ -190,7 +254,7 @@ export default class FoodList extends Component {
                             <div className="food-item">
 
                                 <Card>
-                                    {/* <CardImg top width="10%" src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180" alt="Card image cap" /> */}
+
                                     <CardBody>
                                         <div className="space-f7or">
                                             <CardTitle><h4>{foodItem.foodName}</h4></CardTitle>
@@ -223,7 +287,7 @@ export default class FoodList extends Component {
                     <div className="food-Order-cart">
 
                         <Card>
-                            {/* <CardImg top width="10%" src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180" alt="Card image cap" /> */}
+
                             <CardBody>
                                 <div className="space-f7or">
                                     <CardTitle><h4 className="OrderListTitle">Your Food List</h4></CardTitle>
@@ -252,16 +316,15 @@ export default class FoodList extends Component {
 
                     </div>
 
-                    {!this.state.showphone && <div className="food-Order-cart">
+                    {(!this.state.showphone || !this.state.showCreditCard ) && <div className="food-Order-cart">
 
                         <Card>
-                            {/* <CardImg top width="10%" src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180" alt="Card image cap" /> */}
                             <CardBody>
                                 <div className="space-f7or">
                                     <CardTitle><h4 className="OrderListTitle">Buy Your Food List</h4></CardTitle>
                                 </div>
                                 <div className="space-for">
-                                    <Button color="danger" size="lg">Pay via Credit Card</Button>
+                                    <Button color="danger" size="lg" onClick={()=>this.setState({showCreditCard:true})}>Pay via Credit Card</Button>
 
                                 </div>
                                 <div className="space-for">
@@ -280,18 +343,20 @@ export default class FoodList extends Component {
                             <CardBody>
                                 <div className="space-f7or">
                                     <CardTitle><h4 className="OrderListTitle">Pay via Dialog Mobile</h4></CardTitle>
+                  
+                                    {this.state.originalPin}
                                 </div>
                                 <div className="space-for">
                                     <FormGroup>
                                         <Label for="phone">Phone Number</Label>
-                                        <Input type="text" name="phone" value={this.state.phone} onChange={this.handleChangetxt}  placeholder="Enter your mobile phone number" />
+                                        <Input type="text" name="phone" value={this.state.phone} onChange={this.handleChangetxt} placeholder="Enter your mobile phone number" />
                                     </FormGroup>
                                     <div className="space-for">
                                         <Button color="danger" size="lg" onClick={this.getPin}>Send PIN</Button>
                                     </div>
                                     <FormGroup>
                                         <Label for="pin">4 digit pin</Label>
-                                        <Input type="number" name="pin" value={this.state.pin} onChange={this.handleChangetxt} placeholder="Enter your pin" />
+                                        <Input type="number" name="pin" value={this.state.pin} onChange={this.handleChangetxt_pin.bind(this)} placeholder="Enter your pin" />
                                     </FormGroup>
                                 </div>
                                 <div className="space-for">
@@ -303,6 +368,34 @@ export default class FoodList extends Component {
 
                     </div>}
 
+                    {/* Form for pay by credit card */}
+
+                    {this.state.showCreditCard && <div className="food-Order-cart">
+
+                        <Card>
+                            <CardBody>
+                                <div className="space-f7or">
+                                    <CardTitle><h4 className="OrderListTitle">Pay via Credit Card</h4></CardTitle>
+                                </div>
+                                <div className="space-for">
+                                    <FormGroup>
+                                        <Label for="phone">Enter your name</Label>
+                                        <Input type="text" name="card_holder_name" value={this.state.card_holder_name} onChange={this.handleChangetxt_credit} placeholder="Enter your name" />
+                                    </FormGroup>
+                                
+                                    <FormGroup>
+                                        <Label for="pin">Enter your email</Label>
+                                        <Input type="text" name="card_holder_email" value={this.state.card_holder_email} onChange={this.handleChangetxt_credit} placeholder="Enter your email" />
+                                    </FormGroup>
+                                </div>
+                                <div className="space-for">
+                                    <Button color="danger" size="lg" onClick={this.PurchaseByCreditCard}>Purchase</Button>
+                                    <Button color="primary" size="lg" onClick={()=>this.setState({showCreditCard:false})}>Go back</Button>
+                                </div>
+                            </CardBody>
+                        </Card>
+
+                    </div>}
                 </div>
                 <Col>
                     {this.generateFoodList()}

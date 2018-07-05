@@ -1,8 +1,9 @@
-# See https://help.github.com/ignore-files/ for more about ignoring files.
+/node_modules/
+/food-client/node_modules/
+/OtherServices/SampathBnkPG/node_modules/
 
 # dependencies
-/node_modules
-food-client/node_modules/
+
 
 # testing
 /coverage
